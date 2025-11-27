@@ -93,11 +93,11 @@ async function generateMarkdownForFile(file: FileInput): Promise<FileOutput> {
         stream: false,
     })
 
-    const resp = await fetch(`${process.env.AI_URL}/v1/chat/completions`, {
+    const resp = await fetch(`${process.env.API_AI_URL}/v1/chat/completions`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            Authorization: `Bearer ${process.env.API_AI_KEY}`,
         },
         body,
     })
@@ -123,6 +123,13 @@ async function generateMarkdownForFile(file: FileInput): Promise<FileOutput> {
         path: file.path,
         markdown,
     }
+}
+
+export async function GET(): Promise<Response> {
+    return NextResponse.json(
+        { message: "API de geração batch está ativa." },
+        { status: 200 }
+    )
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
