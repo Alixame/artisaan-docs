@@ -1,0 +1,11 @@
+{
+  "language": "typescript",
+  "project": "nextjs",
+  "search_paths": [
+    "lib"
+  ],
+  "ignore_paths": [
+    "node_modules",
+    "dist"
+  ]
+}

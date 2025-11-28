@@ -1,0 +1,8 @@
+{
+  "files": {
+    "lib/mdx/extract-text-mdx.ts": "e66250038b2763d751892ddd4019f155365ccb1a49925291355726eaacefeb5c",
+    "lib/mdx/extract-headings-mdx.tsx": "e1efa72c6bb7b04bc10eff2331f23d37c628fd846736747c57b6a06960be157a",
+    "lib/mdx/fetch-github-mdx.ts": "11163891fdbb577baec4307193e4c493e81b960c3fed48566ceb90b644576d50",
+    "lib/utils.ts": "7c8c3dfc0cdd370d44932828eb067ef771c8fe7996693221d5d4b90af6d54f2d"
+  }
+}

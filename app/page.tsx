@@ -1,50 +1,28 @@
+import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
+import { Nav } from "@/components/nav";
+
 import {
-    Copy,
-    ZapIcon,
-    FileCodeIcon,
     TerminalIcon,
     ShieldCheck,
     LayoutTemplateIcon,
     CpuIcon,
     PlusIcon,
+    Heart,
+    CoffeeIcon,
+    GithubIcon,
+    Building,
+    BuildingIcon,
 } from "lucide-react";
-
-import Image from "next/image";
 
 export default function Home() {
     return (
         <main className="antialiased overflow-x-hidden selection:bg-blue-500/30 selection:text-blue-200">
-            <div className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020202]/80 backdrop-blur-md">
-                <nav className="max-w-6xl mx-auto h-16 px-6 flex items-center">
-                    <div className="w-1/2 md:w-1/3">
-                        <Image
-                            alt="Artisaan Logo"
-                            width={140}
-                            height={32}
-                            className="pointer-events-none h-5 w-auto"
-                            src="https://d2u449wlhbxla3.cloudfront.net/public/artisaan-dark.svg"
-                        />
-                    </div>
-
-                    <div className="w-1/3 hidden md:flex items-center justify-center gap-8 text-xs font-medium text-zinc-400">
-                        <a href="#" className="hover:text-blue-400 transition-colors">Features</a>
-                        <a href="#" className="hover:text-blue-400 transition-colors">Compatible</a>
-                        <a href="#" className="hover:text-blue-400 transition-colors">Pricing</a>
-                    </div>
-
-                    <div className="w-1/2 md:w-1/3 flex justify-end items-center gap-4">
-                        <a href="#" className="text-xs text-zinc-400 hover:text-white transition-colors">Sign In</a>
-                        <a href="#" className="text-xs font-semibold bg-white text-black px-4 py-2 rounded hover:bg-zinc-200 transition-colors shadow-[0_0_15px_-3px_rgba(255,255,255,0.3)]">
-                            Documentation
-                        </a>
-                    </div>
-                </nav>
-            </div>
+            <Nav />
 
             <Hero />
 
-            <section className="py-24 px-6 relative">
+            <section id="features" className="py-24 px-6 relative">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
                         <div className="md:col-span-4 aura-card rounded-xl p-8 flex flex-col justify-between group relative overflow-hidden">
@@ -204,7 +182,7 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="py-24 px-6 border-t border-white/5 relative">
+            <section id="compatible" className="py-24 px-6 border-t border-white/5 relative">
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                         <div>
@@ -220,53 +198,53 @@ export default function Home() {
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                        <div className="group flex items-center gap-3 p-3 rounded border border-blue-500/20 bg-blue-500/5 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-[#FF2D20]/10 text-[#FF2D20] font-bold text-xs border border-[#FF2D20]/20">Lr</div>
                             <span className="text-sm text-white font-medium">Laravel</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-black text-white font-bold text-[10px] border border-white/10">N</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">Next.js</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-green-500/10 text-green-500 font-bold text-[10px] border border-green-500/20">JS</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">Node.js</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-yellow-500/10 text-yellow-500 font-bold text-[10px] border border-yellow-500/20">Py</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">Python</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-cyan-500/10 text-cyan-400 font-bold text-[10px] border border-cyan-500/20">Go</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">Go</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-slate-500/10 text-slate-400 font-bold text-[10px] border border-slate-500/20">C</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">C/C++</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-purple-500/10 text-purple-400 font-bold text-[10px] border border-purple-500/20">Rb</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">Ruby</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-yellow-500/10 text-yellow-400 font-bold text-[10px] border border-yellow-500/20">Js</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">JavaScript</span>
                         </div>
 
-                        <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                        <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                             <div className="w-8 h-8 flex items-center justify-center rounded bg-blue-500/10 text-blue-400 font-bold text-[10px] border border-blue-500/20">Ts</div>
                             <span className="text-sm text-zinc-400 font-medium group-hover:text-white transition-colors">TypeScript</span>
                         </div>
 
                         <a href="#" className="cursor-pointer">
-                            <div className="group flex items-center gap-3 p-3 rounded border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 transition-all cursor-default">
+                            <div className="group flex items-center gap-3 p-3 rounded border aura-card transition-all cursor-default">
                                 <div className="w-8 h-8 flex items-center justify-center rounded bg-neutral-500/10 text-neutral-400 font-bold text-[10px] border border-neutral-500/20">
                                     <PlusIcon size={16} />
                                 </div>
@@ -278,48 +256,118 @@ export default function Home() {
                 </div>
             </section>
 
-            <footer className="bg-[#020202] py-16 px-6 border-t border-white/5 relative overflow-hidden">
-                <div className="absolute bottom-0 left-0 w-full h-[300px] bg-linear-to-t from-blue-900/10 to-transparent pointer-events-none"></div>
+            <section id="donate" className="py-24 px-6 border-t border-white/5 relative">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-6 bg-blue-500/10 border border-blue-500/20 text-blue-400" >
+                            <Heart size={12} />
+                            <span className="font-medium">Community Supported</span>
+                        </div>
 
-                <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-12 relative z-10">
-                    <div className="flex items-start flex-col gap-4">
-                        <Image
-                            alt="Artisaan Logo"
-                            width={140}
-                            height={32}
-                            className="pointer-events-none h-5 md:h-8 w-auto"
-                            src="https://d2u449wlhbxla3.cloudfront.net/public/artisaan-dark.svg"
-                        />
-
-                        <p className="text-xs text-zinc-500 max-w-[360px]">
-                            Artisaan is a documentation generator that transforms your codebase into technical documentation, using markdown for estilization. Built for developers, by developers.
+                        <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-4">Powered by You.</h2>
+                        <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                            Artisaan is building for you. Your donations keep the parser engines running and fund new features.
                         </p>
                     </div>
 
-                    <div className="flex gap-12">
-                        <div className="flex flex-col gap-3">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Product</h4>
-                            <a href="#" className="text-xs text-zinc-500 hover:text-blue-400 transition-colors">Features</a>
-                            <a href="#" className="text-xs text-zinc-500 hover:text-blue-400 transition-colors">CLI Reference</a>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="aura-card p-8 rounded-2xl flex flex-col text-center">
+                            <div className="w-12 h-12 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+                                <CoffeeIcon size={20} />
+                            </div>
+
+                            <h3 className="text-lg font-medium text-white mb-1">
+                                Help Maintain the Server
+                            </h3>
+
+                            <div className="text-2xl font-semibold tracking-tight mb-4">
+                                $1<span className="text-sm font-normal text-gray-500">/donate</span>
+                            </div>
+
+                            <p className="text-sm text-gray-500 mb-6 grow">
+                                Support basic server costs and get a backer badge on our README.
+                            </p>
+
+                            <button className="w-full py-2 rounded border border-white/10 hover:bg-white/5 transition-colors text-sm font-medium">
+                                Donate
+                            </button>
                         </div>
-                        
-                        <div className="flex flex-col gap-3">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Legal</h4>
-                            <a href="#" className="text-xs text-zinc-500 hover:text-blue-400 transition-colors">Privacy</a>
-                            <a href="#" className="text-xs text-zinc-500 hover:text-blue-400 transition-colors">Terms</a>
+
+                        <div className="aura-card p-8 rounded-2xl flex flex-col text-center border-blue-500/30 bg-blue-500/5 relative">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-500 border border-blue-500/20 text-white text-[10px] font-bold uppercase tracking-wider rounded-full">Most Popular</div>
+                            
+                            <div className="w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                                <GithubIcon size={20} />
+                            </div>
+
+                            <h3 className="text-lg font-medium text-white mb-1">
+                                GitHub Sponsor
+                            </h3>
+
+                            <div className="text-2xl font-semibold tracking-tight mb-4">
+                                $5<span className="text-sm font-normal text-gray-500">/donate</span>
+                            </div>
+
+                            <p className="text-sm text-gray-400 mb-6 grow">
+                                Priority issue triage, early access to new parsers (C#, Go), and private discord access.
+                            </p>
+
+                            <button className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors text-sm font-medium shadow-lg shadow-pink-500/20">
+                                Become a Sponsor
+                            </button>
+                        </div>
+
+                        <div className="aura-card p-8 rounded-2xl flex flex-col text-center">
+                            <div className="w-12 h-12 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-4">
+                                <BuildingIcon size={20} />
+                            </div>
+
+                            <h3 className="text-lg font-medium text-white mb-1">
+                                Enterprise
+                            </h3>
+
+                            <div className="text-2xl font-semibold tracking-tight mb-4">
+                                $20+<span className="text-sm font-normal text-gray-500">/donate</span>
+                            </div>
+
+                            <p className="text-sm text-gray-500 mb-6 grow">
+                                Logo on our homepage, priority roadmap input, and dedicated support channel.
+                            </p>
+
+                            <button className="w-full py-2 rounded border border-white/10 hover:bg-white/5 transition-colors text-sm font-medium">
+                                Donate
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/5 flex justify-between items-center relative z-10">
-                    <span className="text-[10px] text-zinc-600">© 2025 Artisaan.</span>
+                    <div className="mt-16 max-w-lg mx-auto">
+                        <div className="flex justify-between text-xs font-medium text-gray-400 mb-2">
+                            <span>Monthly Goal</span>
+                            <span className="text-white">$7 / $10</span>
+                        </div>
 
-                    {/* <div className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                        <span className="text-[10px] text-zinc-500">v0.1.0-beta</span>
-                    </div> */}
+                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-full bg-linear-to-r from-blue-600 to-purple-600 w-[70%] rounded-full"></div>
+                        </div>
+
+                        <div className="flex justify-center -space-x-2 mt-6">
+                            <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-[#030304]"></div>
+                            <div className="w-8 h-8 rounded-full bg-gray-600 border-2 border-[#030304]"></div>
+                            <div className="w-8 h-8 rounded-full bg-gray-500 border-2 border-[#030304]"></div>
+                            <div className="w-8 h-8 rounded-full bg-gray-400 border-2 border-[#030304]"></div>
+                            <div className="w-8 h-8 rounded-full bg-[#030304] border border-dashed border-gray-600 flex items-center justify-center text-[10px] text-gray-500 font-medium pl-1">
+                                +42
+                            </div>
+                        </div>
+
+                        <p className="text-center text-xs text-gray-600 mt-3">
+                            Join 46 other sponsors backing Artisaan.
+                        </p>
+                    </div>
                 </div>
-            </footer>
+            </section>
+
+            <Footer />
         </main>
     );
 }
