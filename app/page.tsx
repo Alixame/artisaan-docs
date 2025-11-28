@@ -312,7 +312,7 @@ export default function Home() {
                                 Priority issue triage, early access to new parsers (C#, Go), and private discord access.
                             </p>
 
-                            <button className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors text-sm font-medium shadow-lg shadow-pink-500/20">
+                            <button className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors text-sm font-medium">
                                 Become a Sponsor
                             </button>
                         </div>

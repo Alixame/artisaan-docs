@@ -96,7 +96,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                             Host your Artisaan documentation on our edge network. Fast, secure, and always in sync with git.
                         </p>
                         
-                        <a href="#" className="inline-flex items-center justify-center w-full rounded bg-white text-black text-xs font-semibold py-2 hover:bg-zinc-200 transition-colors relative z-10">
+                        <a href="#" className="cursor-not-allowed inline-flex items-center justify-center w-full rounded bg-white/60 text-black text-xs font-semibold py-2 hover:bg-zinc-200 transition-colors relative z-10">
                             Deploy Now
                         </a>
                     </div>
