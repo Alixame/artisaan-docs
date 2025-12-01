@@ -4,7 +4,7 @@ import { SearchIcon } from "lucide-react";
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
     return (
-        <main className="antialiased overflow-x-hidden selection:bg-blue-500/30 selection:text-blue-200">
+        <main className="antialiased selection:bg-blue-500/30 selection:text-blue-200 overflow-visible">
             <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020202]/80 backdrop-blur-md">
                 <div className="max-w-[1400px] mx-auto h-full py-4 px-6 flex items-center justify-between">
                     <div className="flex items-center gap-6">
@@ -30,7 +30,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             </header>
 
             <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
-                <aside className="fixed top-14 left-0 z-30 hidden w-full shrink-0 md:sticky md:block h-[calc(100vh-3.5rem)] md:w-60 lg:w-[260px] overflow-y-auto py-6 lg:py-8 pr-6">
+                <aside className="hidden md:block md:sticky top-14 left-0 z-30 w-full shrink-0 h-[calc(100vh-3.5rem)] md:w-60 lg:w-[260px] overflow-y-auto py-6 lg:py-8 pr-6">
                     <div className="w-full space-y-8">
                         <div className="pb-4">
                             <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Getting Started</h4>
