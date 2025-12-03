@@ -11,7 +11,6 @@ import {
     Heart,
     CoffeeIcon,
     GithubIcon,
-    Building,
     BuildingIcon,
 } from "lucide-react";
 
@@ -288,9 +287,11 @@ export default function Home() {
                                 Support basic server costs and get a backer badge on our README.
                             </p>
 
-                            <button className="w-full py-2 rounded border border-white/10 hover:bg-white/5 transition-colors text-sm font-medium">
-                                Donate
-                            </button>
+                            <a href={process.env.NEXT_PUBLIC_STRIPE_DONATE_1} className="cursor-pointer" target="_blank">
+                                <button className="w-full py-2 rounded border border-white/10 hover:bg-white/5 transition-colors text-sm font-medium">
+                                    Donate
+                                </button>
+                            </a>
                         </div>
 
                         <div className="aura-card p-8 rounded-2xl flex flex-col text-center border-blue-500/30 bg-blue-500/5 relative">
@@ -312,9 +313,11 @@ export default function Home() {
                                 Priority issue triage, early access to new parsers (C#, Go), and private discord access.
                             </p>
 
-                            <button className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors text-sm font-medium">
-                                Become a Sponsor
-                            </button>
+                            <a href={process.env.NEXT_PUBLIC_STRIPE_DONATE_2} className="cursor-pointer" target="_blank">
+                                <button className="w-full py-2 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors text-sm font-medium">
+                                    Become a Sponsor
+                                </button>
+                            </a>
                         </div>
 
                         <div className="aura-card p-8 rounded-2xl flex flex-col text-center">
@@ -334,9 +337,11 @@ export default function Home() {
                                 Logo on our homepage, priority roadmap input, and dedicated support channel.
                             </p>
 
-                            <button className="w-full py-2 rounded border border-white/10 hover:bg-white/5 transition-colors text-sm font-medium">
-                                Donate
-                            </button>
+                            <a href={process.env.NEXT_PUBLIC_STRIPE_DONATE_3} className="cursor-pointer" target="_blank">
+                                <button className="w-full py-2 rounded border border-white/10 hover:bg-white/5 transition-colors text-sm font-medium">
+                                    Donate
+                                </button>
+                            </a>
                         </div>
                     </div>
 
