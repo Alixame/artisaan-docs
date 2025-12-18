@@ -8,16 +8,34 @@ export const s3 = new S3Client({
     },
 });
 
-export async function putJson(
+/**
+ * Put any object (text, mdx, etc)
+ */
+export async function putObject(
     key: string,
-    body: object
+    body: string | Buffer,
+    contentType = "text/plain"
 ) {
     await s3.send(
         new PutObjectCommand({
             Bucket: process.env.AWS_BUCKET!,
             Key: key,
-            Body: JSON.stringify(body, null, 2),
-            ContentType: "application/json",
+            Body: body,
+            ContentType: contentType,
         })
+    );
+}
+
+/**
+ * Put JSON helper
+ */
+export async function putJson(
+    key: string,
+    body: object
+) {
+    return putObject(
+        key,
+        JSON.stringify(body, null, 2),
+        "application/json"
     );
 }
