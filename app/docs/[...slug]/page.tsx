@@ -122,7 +122,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                         </div>
 
                         <a
-                            href="#"
+                            href={process.env.NEXT_PUBLIC_STRIPE_DONATE_1}
                             className="mt-3 inline-flex items-center justify-center w-full rounded bg-white text-black text-xs font-semibold py-2 hover:bg-zinc-200 transition-colors relative z-10"
                         >
                             Donate $1
