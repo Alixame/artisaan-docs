@@ -6,6 +6,7 @@ import { mdxComponents } from "@/components/mdx-components";
 import { extractHeadingsFromMDX } from "@/lib/mdx/extract-headings-mdx";
 import { parseMDXWithFrontMatter } from "@/lib/mdx/parse-frontmatter";
 import { headers } from "next/headers";
+import { cn } from "@/lib/utils";
 
 
 /* =========================================================
@@ -104,8 +105,9 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
     const latestResponse = await fetch("https://artisaan.com.br/latest.json").then(res => res.json());
 
     const manifest = await fetch(
-        `${process.env.NEXT_PUBLIC_BUCKET_URL}/projects/${projectSlug}/latest/manifest.json`
-    ).then(res => res.json())
+        `https://artisaan-docs-bucket.s3.us-east-1.amazonaws.com/projects/${projectSlug}/latest/manifest.json`,
+        { cache: "no-cache" }
+    ).then(res => res.json());
 
     return (
         <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
@@ -113,12 +115,20 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                 <div className="w-full space-y-8">
                     {manifest.sections.map((section: any) => (
                         <div className="pb-4" key={section.slug} title={section.title}>
+                            <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">
+                                {section.title}
+                            </h4>
+
                             <div className="grid grid-flow-row auto-rows-max text-[13px]">
                                 {section.pages.map((page: any) => (
                                     <a
                                         key={page.route}
-                                        href={`/${page.route}`}
-                                        className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-blue-400 bg-blue-500/10"
+                                        href={`/docs/${page.route}`}
+                                        className={cn(
+                                            page.route === path
+                                                ? "group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-blue-400 bg-blue-500/10"
+                                                : "group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 font-medium text-zinc-400 hover:text-zinc-50"
+                                            )}
                                     >
                                         {page.label}
                                     </a>
@@ -126,44 +136,6 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                             </div>
                         </div>
                     ))}
-
-                    {/* <div className="pb-4">
-                        <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Getting Started</h4>
-                        <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                            <Link href="/docs/introduction" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-blue-400 bg-blue-500/10">Introduction</Link>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 font-medium text-zinc-400 hover:text-zinc-50">Installation</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Changelog</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Upgrade Guide</a>
-                        </div>
-                    </div> */}
-
-                    {/* <div className="pb-4">
-                        <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Configuration</h4>
-                        <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">artisaan.config.json</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Environment Variables</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Theming</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Dark Mode</a>
-                        </div>
-                    </div>
-
-                    <div className="pb-4">
-                        <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">API Reference</h4>
-                        <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">CLI Commands</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Generators</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Plugins</a>
-                        </div>
-                    </div>
-
-                    <div className="pb-4">
-                        <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Integrations</h4>
-                        <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Laravel</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Next.js</a>
-                            <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Python</a>
-                        </div>
-                    </div> */}
                 </div>
             </aside>
 
