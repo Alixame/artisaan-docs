@@ -125,6 +125,24 @@ Criar:
 - documentação organizada
 - exemplos usando <CodeBlock> ou <CodeTabs>
 - nenhum HTML
+
+📌 **IDENTIFICAÇÃO DE NAVEGAÇÃO (OBRIGATÓRIO)**
+
+Você DEVE inferir e incluir no front-matter:
+
+- section: nome da seção principal da documentação (ex: "Getting Started", "Core", "API", "CLI", "Internals")
+- sidebarOrder: número inteiro começando em 1 (define ordem na sidebar)
+- sidebarLabel: nome curto e humano para menu lateral
+- route: slug amigável e hierárquico (ex: getting-started/introduction, core/config, cli/commands)
+
+⚠️ REGRAS:
+- NÃO use nome de arquivo como rota
+- NÃO exponha extensões (.rs, .ts, etc)
+- Prefira termos humanos e técnicos
+- Se o arquivo for introdutório, use "getting-started"
+- Se for baixo nível, use "internals"
+
+Esses campos DEVEM estar no front-matter.
 `
 
 async function generateMarkdownForFile(file: FileInput): Promise<FileOutput> {

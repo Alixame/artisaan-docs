@@ -1,7 +1,7 @@
 export async function fetchGithubMDX(path: string) {
     if (process.env.NODE_ENV === "development") {
         const fs = await import("fs/promises");
-        const localFilePath = `./docs/${path}.mdx`;
+        const localFilePath = `./docs/${path}.md`;
 
         try {
             const fileContent = await fs.readFile(localFilePath, "utf-8");
@@ -13,7 +13,7 @@ export async function fetchGithubMDX(path: string) {
     };
 
     const file = await fetch(
-        `https://raw.githubusercontent.com/Alixame/artisaan-docs/main/docs/${path}.mdx`,
+        `https://raw.githubusercontent.com/Alixame/artisaan-docs/main/docs/${path}.md`,
         {
             next: { revalidate: 60 }, // caching inteligente
         }

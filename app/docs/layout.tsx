@@ -29,53 +29,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                 </div>
             </header>
 
-            <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
-                <aside className="hidden md:block md:sticky top-14 left-0 z-30 w-full shrink-0 h-[calc(100vh-3.5rem)] md:w-60 lg:w-[260px] overflow-y-auto py-6 lg:py-8 pr-6">
-                    <div className="w-full space-y-8">
-                        <div className="pb-4">
-                            <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Getting Started</h4>
-                            <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                                <Link href="/docs/introduction" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-blue-400 bg-blue-500/10">Introduction</Link>
-                                {/* <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 font-medium text-zinc-400 hover:text-zinc-50">Installation</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Changelog</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Upgrade Guide</a> */}
-                            </div>
-                        </div>
-
-                        {/* <div className="pb-4">
-                            <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Configuration</h4>
-                            <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">artisaan.config.json</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Environment Variables</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Theming</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Dark Mode</a>
-                            </div>
-                        </div>
-
-                        <div className="pb-4">
-                            <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">API Reference</h4>
-                            <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">CLI Commands</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Generators</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Plugins</a>
-                            </div>
-                        </div>
-
-                        <div className="pb-4">
-                            <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">Integrations</h4>
-                            <div className="grid grid-flow-row auto-rows-max text-[13px]">
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Laravel</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Next.js</a>
-                                <a href="#" className="group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-zinc-400 hover:text-zinc-50">Python</a>
-                            </div>
-                        </div> */}
-                    </div>
-                </aside>
-                
-                <div className="w-full min-w-0">
-                    {children}
-                </div>
-            </section>
+            {children}
 
             <footer className="w-full bg-[#020202] py-16 px-6 border-t border-white/5 relative overflow-hidden">
                 <div className="absolute bottom-0 left-0 w-full h-[300px] bg-linear-to-t from-blue-900/10 to-transparent pointer-events-none"></div>
