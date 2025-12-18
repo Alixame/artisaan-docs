@@ -4,19 +4,78 @@ import { fetchGithubMDX } from "@/lib/mdx/fetch-github-mdx";
 import { mdxComponents } from "@/components/mdx-components";
 import { extractHeadingsFromMDX } from "@/lib/mdx/extract-headings-mdx";
 import { parseMDXWithFrontMatter } from "@/lib/mdx/parse-frontmatter";
+import { headers } from "next/headers";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }) {
+
+/* =========================================================
+   Helpers
+========================================================= */
+
+async function getProjectSlugFromHost(): Promise<string | null> {
+    const host = (await headers()).get("host");
+    if (!host) return null;
+
+    // slug.artisaan.com.br
+    const parts = host.split(".");
+    if (parts.length < 3) return null;
+
+    // evita pegar www, api, etc
+    if (parts[0] === "www" || parts[0] === "api") return null;
+
+    return parts[0];
+}
+
+function resolveDocPath(slug?: string[]) {
+    return slug?.join("/") ?? "introduction";
+}
+
+async function fetchS3MDX(
+    projectSlug: string,
+    path: string
+): Promise<string | null> {
+    const baseUrl = process.env.NEXT_PUBLIC_CDN_URL;
+    if (!baseUrl) return null;
+
+    const url = `${baseUrl}/projects/${projectSlug}/latest/${path}.mdx`;
+
+    try {
+        const res = await fetch(url, {
+            next: { revalidate: 30 },
+        });
+
+        if (!res.ok) return null;
+        return await res.text();
+    } catch {
+        return null;
+    }
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ slug?: string[] }>;
+}) {
     const { slug } = await params;
-    const rawMDX = await fetchGithubMDX(slug ? slug.join("/") : "introduction");
+    const path = resolveDocPath(slug);
+    const projectSlug = await getProjectSlugFromHost();
 
-    if (!rawMDX) return { title: "Artisaan Docs", description: "" };
+    const rawMDX = projectSlug
+        ? await fetchS3MDX(projectSlug, path)
+        : await fetchGithubMDX(path);
+
+    if (!rawMDX) {
+        return {
+            title: "Artisaan Docs",
+            description: "",
+        };
+    }
 
     const { frontmatter } = parseMDXWithFrontMatter(rawMDX);
 
     return {
-        title: "Artisaan Docs | " + frontmatter.title,
-        description: frontmatter.description || "",
-        keywords: frontmatter.keywords || [],
+        title: `Artisaan Docs | ${frontmatter.title ?? ""}`,
+        description: frontmatter.description ?? "",
+        keywords: frontmatter.keywords ?? [],
         openGraph: {
             title: frontmatter.title,
             description: frontmatter.description,
@@ -26,8 +85,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
 
 export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
     const { slug } = await params;
+    const path = resolveDocPath(slug);
+    const projectSlug = await getProjectSlugFromHost();
 
-    const mdxContent = await fetchGithubMDX(slug ? slug.join("/") : "introduction");
+    const mdxContent = projectSlug
+        ? await fetchS3MDX(projectSlug, path)
+        : await fetchGithubMDX(path);
+
 
     if (!mdxContent) {
         return <h1 className="text-white text-2xl font-bold">Page not found</h1>;
