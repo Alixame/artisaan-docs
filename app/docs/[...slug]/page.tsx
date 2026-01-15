@@ -7,6 +7,7 @@ import { extractHeadingsFromMDX } from "@/lib/mdx/extract-headings-mdx";
 import { parseMDXWithFrontMatter } from "@/lib/mdx/parse-frontmatter";
 import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 /* =========================================================
@@ -20,7 +21,7 @@ async function getProjectSlugFromHost(): Promise<string | null> {
 
     const parts = host.split(".");
 
-    if (parts.length < 2) return null;
+    if (parts.length < 1) return null;
 
     if (parts[0] === "www" || parts[0] === "api") return null;
 
@@ -96,15 +97,6 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
         ? await fetchS3MDX(projectSlug, path)
         : await fetchGithubMDX(path);
 
-    if (!mdxContent) {
-        return <h1 className="text-white text-2xl font-bold">Page not found</h1>;
-    }
-
-    const headings = extractHeadingsFromMDX(mdxContent);
-    const { content } = parseMDXWithFrontMatter(mdxContent);
-
-    const latestResponse = await fetch("https://artisaan.com.br/latest.json").then(res => res.json());
-
     const manifest = projectSlug ? await fetch(
         `https://artisaan-docs-bucket.s3.us-east-1.amazonaws.com/projects/${projectSlug}/latest/manifest.json`,
         { cache: "no-cache" }
@@ -112,12 +104,55 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
         sections: [],
     };
 
+    if (!mdxContent) {
+        return (
+            <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
+                <aside className="hidden md:block md:sticky top-14 left-0 z-30 w-full md:w-60 lg:w-[260px] py-6 lg:py-8 pr-6">
+                    <ScrollArea className="shrink-0 h-[calc(100vh-3.5rem)] w-full space-y-8">
+                        {manifest.sections.map((section: any, index: number) => (
+                            <div className="pb-4" key={index} title={section.title}>
+                                <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">
+                                    {section.title}
+                                </h4>
+
+                                <div className="grid grid-flow-row auto-rows-max text-[13px]">
+                                    {section.pages.map((page: any) => (
+                                        <a
+                                            key={page.route}
+                                            href={`/docs/${page.route}`}
+                                            className={cn(
+                                                page.route === path
+                                                    ? "group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 hover:underline text-blue-400 bg-blue-500/10"
+                                                    : "group flex w-full items-center gap-2 rounded-md border border-transparent px-2 py-1.5 font-medium text-zinc-400 hover:text-zinc-50"
+                                                )}
+                                        >
+                                            {page.label}
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </ScrollArea>
+                </aside>
+
+                <div className="w-full min-w-0">
+                    Page not found.
+                </div>
+            </section>
+        );
+    }
+
+    const headings = extractHeadingsFromMDX(mdxContent);
+    const { content } = parseMDXWithFrontMatter(mdxContent);
+
+    const latestResponse = await fetch("https://artisaan.com.br/latest.json").then(res => res.json());
+
     return (
         <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
-            <aside className="hidden md:block md:sticky top-14 left-0 z-30 w-full shrink-0 h-[calc(100vh-3.5rem)] md:w-60 lg:w-[260px] overflow-y-auto py-6 lg:py-8 pr-6">
-                <div className="w-full space-y-8">
-                    {manifest.sections.map((section: any) => (
-                        <div className="pb-4" key={section.slug} title={section.title}>
+            <aside className="hidden md:block md:sticky top-14 left-0 z-30 w-full md:w-60 lg:w-[260px] py-6 lg:py-8 pr-6">
+                <ScrollArea className="shrink-0 h-[calc(100vh-3.5rem)] w-full space-y-8">
+                    {manifest.sections.map((section: any, index: number) => (
+                        <div className="pb-4" key={index} title={section.title}>
                             <h4 className="mb-3 text-sm font-semibold tracking-tight text-white">
                                 {section.title}
                             </h4>
@@ -139,7 +174,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
                             </div>
                         </div>
                     ))}
-                </div>
+                </ScrollArea>
             </aside>
 
             <div className="w-full min-w-0">

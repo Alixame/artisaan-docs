@@ -67,7 +67,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                     </div>
 
                     <div className="mt-16 pt-8 border-t border-white/5 flex justify-between items-center relative z-10">
-                        <span className="text-[10px] text-zinc-600">© 2025 Artisaan.</span>
+                        <span className="text-[10px] text-zinc-600">© {new Date().getFullYear()} Artisaan.</span>
                     </div>
                 </div>
             </footer>
