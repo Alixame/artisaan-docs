@@ -15,13 +15,13 @@ import { cn } from "@/lib/utils";
 
 async function getProjectSlugFromHost(): Promise<string | null> {
     const host = (await headers()).get("host");
+
     if (!host) return null;
 
-    // slug.artisaan.com.br
     const parts = host.split(".");
+
     if (parts.length < 2) return null;
 
-    // evita pegar www, api, etc
     if (parts[0] === "www" || parts[0] === "api") return null;
 
     return parts[0];
@@ -58,9 +58,10 @@ export async function generateMetadata({
     params: Promise<{ slug?: string[] }>;
 }) {
     const { slug } = await params;
+
     const path = resolveDocPath(slug);
     const projectSlug = await getProjectSlugFromHost();
-
+    
     const rawMDX = projectSlug
         ? await fetchS3MDX(projectSlug, path)
         : await fetchGithubMDX(path);
@@ -87,13 +88,13 @@ export async function generateMetadata({
 
 export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
     const { slug } = await params;
+
     const path = resolveDocPath(slug);
     const projectSlug = await getProjectSlugFromHost();
 
     const mdxContent = projectSlug
         ? await fetchS3MDX(projectSlug, path)
         : await fetchGithubMDX(path);
-
 
     if (!mdxContent) {
         return <h1 className="text-white text-2xl font-bold">Page not found</h1>;
@@ -104,10 +105,12 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
 
     const latestResponse = await fetch("https://artisaan.com.br/latest.json").then(res => res.json());
 
-    const manifest = await fetch(
+    const manifest = projectSlug ? await fetch(
         `https://artisaan-docs-bucket.s3.us-east-1.amazonaws.com/projects/${projectSlug}/latest/manifest.json`,
         { cache: "no-cache" }
-    ).then(res => res.json());
+    ).then(res => res.json()).catch(() => null) : {
+        sections: [],
+    };
 
     return (
         <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
