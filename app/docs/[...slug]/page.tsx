@@ -23,7 +23,7 @@ async function getProjectSlugFromHost(): Promise<string | null> {
 
     if (parts.length < 1) return null;
 
-    if (parts[0] === "www" || parts[0] === "api") return null;
+    if (parts[0] === "www" || parts[0] === "api" || parts[0] === "artisaan" || parts[0] === "localhost:3000") return null;
 
     return parts[0];
 }
@@ -100,6 +100,11 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
     ).then(res => res.json()).catch(() => null) : {
         sections: [],
     };
+
+    console.log("PROJECT SLUG", projectSlug);
+    console.log("MANIFEST", manifest);
+    console.log("PATH", path);
+    console.log("MDX CONTENT", mdxContent ? "FOUND" : "NOT FOUND");
 
     if (!mdxContent) {
         return (
