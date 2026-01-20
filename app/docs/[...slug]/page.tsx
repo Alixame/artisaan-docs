@@ -106,6 +106,13 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
     console.log("PATH", path);
     console.log("MDX CONTENT", mdxContent ? "FOUND" : "NOT FOUND");
 
+    const response = await fetch(`https://artisaan-docs-bucket.s3.us-east-1.amazonaws.com/public/static.json`, { cache: "no-store" })
+
+    const data = await response.json();
+
+    const monthlyGoal = data.monthly_goal;
+    const goalAchieved = data.goal_achieved;
+
     if (!mdxContent) {
         return (
             <section className="container max-w-[1400px] mx-auto px-6 flex min-h-screen pt-14">
@@ -255,11 +262,11 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
 
                                 <div className="flex justify-between text-xs font-medium text-gray-400 mb-2">
                                     <span>Monthly Goal</span>
-                                    <span className="text-white">$7 / $10</span>
+                                    <span className="text-white">${goalAchieved} / ${monthlyGoal}</span>
                                 </div>
 
                                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-linear-to-r from-blue-600 to-purple-600 w-[70%] rounded-full"></div>
+                                    <div className="h-full bg-linear-to-r from-blue-600 to-purple-600" style={{ width: `${(goalAchieved / monthlyGoal) * 100}%` }}></div>
                                 </div>
 
                                 <a
