@@ -1,165 +1,217 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server"
 
-type AIFile = {
+/* =======================
+ * Tipos
+ * ======================= */
+
+type FileInput = {
     path: string
+    typeCode: string // rust | ts | js | py | etc
     code: string
 }
 
-type AIPayload = {
-    mode: 'tests'
-    language: string
-    entry?: string
-    files: AIFile[]
+type TestFile = {
+    path: string
+    content: string
 }
 
-function resolveTestPath(sourcePath: string, language: string) {
-    const parts = sourcePath.split('/')
-    const file = parts.pop() ?? ''
-    const dir = parts.join('/')
+type AIResponse = {
+    files: TestFile[]
+}
 
-    const name = file.split('.').slice(0, -1).join('.')
+/* =======================
+ * Prompt
+ * ======================= */
 
-    switch (language) {
-        // =================
-        // RUST
-        // =================
-        case 'rust':
-            return `tests/${name}_test.rs`
+const SYSTEM_PROMPT = `
+Você é um gerador profissional de testes automatizados.
 
-        // =================
-        // TS / JS
-        // =================
-        case 'typescript':
-        case 'javascript': {
-            const ext = file.endsWith('.tsx') ? 'tsx' :
-                        file.endsWith('.ts') ? 'ts' : 'js'
+Sua missão é gerar testes reais, úteis e completos para o código fornecido.
 
-            return `${dir}/__tests__/${name}.test.${ext}`
-        }
+📌 REGRAS ABSOLUTAS
+- Retorne APENAS JSON válido
+- NÃO explique nada
+- NÃO use Markdown
+- NÃO use comentários fora do código
+- NÃO gere testes genéricos ou "it_works"
 
-        // =================
-        // PHP
-        // =================
-        case 'php':
-            return `tests/Unit/${name}Test.php`
+📌 FORMATO DE SAÍDA (OBRIGATÓRIO)
 
-        // =================
-        // PYTHON
-        // =================
-        case 'python':
-            return `tests/${dir.replace(/^src\//, '')}/test_${name}.py`
-
-        // =================
-        // JAVA / KOTLIN
-        // =================
-        case 'java':
-        case 'kotlin':
-            return sourcePath
-                .replace('/main/', '/test/')
-                .replace(`.${language === 'java' ? 'java' : 'kt'}`, `Test.${language === 'java' ? 'java' : 'kt'}`)
-
-        // =================
-        // GO
-        // =================
-        case 'go':
-            return `${dir}/${name}_test.go`
-
-        // =================
-        // FALLBACK
-        // =================
-        default:
-            return `tests/${name}.test`
+{
+  "files": [
+    {
+      "path": "<caminho do arquivo de teste>",
+      "content": "<conteúdo completo do teste>"
     }
+  ]
 }
 
-export async function POST(req: NextRequest) {
-    try {
-        const body: AIPayload = await req.json()
+📌 REGRAS DE PATH POR LINGUAGEM
 
-        if (body.mode !== 'tests') {
-            return NextResponse.json(
-                { error: 'Invalid mode' },
-                { status: 400 }
-            )
-        }
+Rust:
+- src/foo/bar.rs → tests/foo/bar_test.rs
+- NÃO usar #[cfg(test)]
+- Usar testes de integração sempre que possível
 
-        if (!body.files?.length) {
-            return NextResponse.json(
-                { error: 'files[] is required' },
-                { status: 400 }
-            )
-        }
+TypeScript / JavaScript:
+- src/foo.ts → src/foo.test.ts
 
-        const SYSTEM_PROMPT = `
-Você é um engenheiro sênior especialista em testes automatizados.
+Python:
+- foo/bar.py → tests/foo/test_bar.py
 
-REGRAS:
-- Gere testes REAIS
-- NÃO gere placeholders
-- NÃO use it_works
-- Use o framework idiomático da linguagem
-- Referencie funções reais do código
-- Retorne APENAS código de teste
-        `.trim()
+📌 QUALIDADE DOS TESTES
+- Cobrir casos válidos e inválidos
+- Usar asserts reais
+- Seguir boas práticas da linguagem
 
-        const results = []
+📌 SE NÃO FOR POSSÍVEL GERAR TESTES
+Retorne:
+{
+  "files": []
+}
+`
 
-        for (const file of body.files) {
-            const userPrompt = `
-Arquivo: ${file.path}
-Linguagem: ${body.language}
+/* =======================
+ * Utils
+ * ======================= */
+
+function normalizeTestPath(
+    sourcePath: string,
+    language: string
+): string {
+    if (language === "rust") {
+        return sourcePath
+            .replace(/^src\//, "tests/")
+            .replace(/\.rs$/, "_test.rs")
+    }
+
+    if (language === "ts" || language === "js") {
+        return sourcePath.replace(/\.(ts|js)$/, ".test.$1")
+    }
+
+    if (language === "py") {
+        const parts = sourcePath.split("/")
+        const file = parts.pop()!
+        return ["tests", ...parts, `test_${file}`].join("/")
+    }
+
+    return sourcePath
+}
+
+/* =======================
+ * AI Call
+ * ======================= */
+
+async function generateTestsForFile(
+    file: FileInput
+): Promise<TestFile[]> {
+    const messages = [
+        {
+            role: "system",
+            content: SYSTEM_PROMPT,
+        },
+        {
+            role: "user",
+            content: `
+Linguagem: ${file.typeCode}
+
+Arquivo original:
+Path: ${file.path}
 
 Código:
+\`\`\`${file.typeCode}
 ${file.code}
-            `.trim()
+\`\`\`
+`,
+        },
+    ]
 
-            const aiResp = await fetch(process.env.AI_BASE_URL!, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${process.env.AI_API_KEY}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: process.env.AI_MODEL,
-                    messages: [
-                        { role: 'system', content: SYSTEM_PROMPT },
-                        { role: 'user', content: userPrompt },
-                    ],
-                    temperature: 0.2,
-                }),
-            })
+    const body = JSON.stringify({
+        model: "deepseek-chat",
+        messages,
+        temperature: 0,
+        top_p: 1,
+        max_tokens: 6000,
+        stream: false,
+    })
 
-            if (!aiResp.ok) {
-                const err = await aiResp.text()
-                return NextResponse.json(
-                    { error: 'AI error', details: err },
-                    { status: 500 }
-                )
-            }
+    const resp = await fetch(
+        `${process.env.API_AI_URL}/v1/chat/completions`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.API_AI_KEY}`,
+            },
+            body,
+        }
+    )
 
-            const data = await aiResp.json()
-            const content =
-                data.choices?.[0]?.message?.content?.trim()
+    if (!resp.ok) {
+        console.error("Erro IA:", resp.status, resp.statusText)
+        return []
+    }
 
-            if (!content) {
-                return NextResponse.json(
-                    { error: 'Empty AI response' },
-                    { status: 500 }
-                )
-            }
+    const json = await resp.json()
+    const content = json?.choices?.[0]?.message?.content
 
-            results.push({
-                path: resolveTestPath(file.path, body.language),
-                content,
-            })
+    if (!content) return []
+
+    let parsed: AIResponse
+
+    try {
+        parsed = JSON.parse(content)
+    } catch (err) {
+        console.error("JSON inválido da IA:", content)
+        return []
+    }
+
+    if (!Array.isArray(parsed.files)) return []
+
+    return parsed.files.map((f) => ({
+        path: f.path || normalizeTestPath(file.path, file.typeCode),
+        content: f.content,
+    }))
+}
+
+/* =======================
+ * Handlers
+ * ======================= */
+
+export async function GET(): Promise<Response> {
+    return NextResponse.json(
+        { message: "API de geração de testes (IA) ativa." },
+        { status: 200 }
+    )
+}
+
+export async function POST(req: NextRequest): Promise<Response> {
+    try {
+        const body = await req.json()
+        const files: FileInput[] = body?.files || []
+
+        if (!Array.isArray(files) || files.length === 0) {
+            return NextResponse.json(
+                { error: "Nenhum arquivo fornecido." },
+                { status: 400 }
+            )
         }
 
-        return NextResponse.json({ files: results })
-    } catch (err) {
-        console.error('[AI TEST ROUTE ERROR]', err)
+        const results = await Promise.all(
+            files.map((file) => generateTestsForFile(file))
+        )
+
         return NextResponse.json(
-            { error: 'Invalid request' },
-            { status: 400 }
+            {
+                files: results.flat(),
+            },
+            { status: 200 }
+        )
+    } catch (err) {
+        console.error("Erro em /api/cli/ia:", err)
+        return NextResponse.json(
+            { error: "Erro interno ao gerar testes." },
+            { status: 500 }
         )
     }
 }
