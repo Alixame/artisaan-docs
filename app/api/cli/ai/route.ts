@@ -13,74 +13,152 @@ type AIPayload = {
 }
 
 function resolveTestPath(sourcePath: string, language: string) {
-    if (language === 'rust') {
-        const name =
-            sourcePath
-                .split('/')
-                .pop()
-                ?.replace('.rs', '') ?? 'mod'
+    const parts = sourcePath.split('/')
+    const file = parts.pop() ?? ''
+    const dir = parts.join('/')
 
-        return `tests/${name}_test.rs`
+    const name = file.split('.').slice(0, -1).join('.')
+
+    switch (language) {
+        // =================
+        // RUST
+        // =================
+        case 'rust':
+            return `tests/${name}_test.rs`
+
+        // =================
+        // TS / JS
+        // =================
+        case 'typescript':
+        case 'javascript': {
+            const ext = file.endsWith('.tsx') ? 'tsx' :
+                        file.endsWith('.ts') ? 'ts' : 'js'
+
+            return `${dir}/__tests__/${name}.test.${ext}`
+        }
+
+        // =================
+        // PHP
+        // =================
+        case 'php':
+            return `tests/Unit/${name}Test.php`
+
+        // =================
+        // PYTHON
+        // =================
+        case 'python':
+            return `tests/${dir.replace(/^src\//, '')}/test_${name}.py`
+
+        // =================
+        // JAVA / KOTLIN
+        // =================
+        case 'java':
+        case 'kotlin':
+            return sourcePath
+                .replace('/main/', '/test/')
+                .replace(`.${language === 'java' ? 'java' : 'kt'}`, `Test.${language === 'java' ? 'java' : 'kt'}`)
+
+        // =================
+        // GO
+        // =================
+        case 'go':
+            return `${dir}/${name}_test.go`
+
+        // =================
+        // FALLBACK
+        // =================
+        default:
+            return `tests/${name}.test`
     }
-
-    return `tests/generated.test`
-}
-
-function generateRustTest(sourcePath: string) {
-    // eslint-disable-next-line @next/next/no-assign-module-variable
-    const module =
-        sourcePath
-            .split('/')
-            .pop()
-            ?.replace('.rs', '') ?? 'module'
-
-    return `
-#[cfg(test)]
-mod ${module}_tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
-`.trim()
 }
 
 export async function POST(req: NextRequest) {
     try {
-        const rawBody = await req.json()
+        const body: AIPayload = await req.json()
 
-        // aceita root ou body embrulhado
-        const body: AIPayload = rawBody?.data ?? rawBody
-
-        if (body?.mode !== 'tests') {
+        if (body.mode !== 'tests') {
             return NextResponse.json(
-                {
-                    error: 'Invalid mode',
-                    expected: 'tests',
-                    received: body?.mode,
-                },
+                { error: 'Invalid mode' },
                 { status: 400 }
             )
         }
 
-        if (!Array.isArray(body.files) || body.files.length === 0) {
+        if (!body.files?.length) {
             return NextResponse.json(
                 { error: 'files[] is required' },
                 { status: 400 }
             )
         }
 
-        const files = body.files.map(file => ({
-            path: resolveTestPath(file.path, body.language),
-            content: generateRustTest(file.path),
-        }))
+        const SYSTEM_PROMPT = `
+Você é um engenheiro sênior especialista em testes automatizados.
 
-        return NextResponse.json({ files })
+REGRAS:
+- Gere testes REAIS
+- NÃO gere placeholders
+- NÃO use it_works
+- Use o framework idiomático da linguagem
+- Referencie funções reais do código
+- Retorne APENAS código de teste
+        `.trim()
+
+        const results = []
+
+        for (const file of body.files) {
+            const userPrompt = `
+Arquivo: ${file.path}
+Linguagem: ${body.language}
+
+Código:
+${file.code}
+            `.trim()
+
+            const aiResp = await fetch(process.env.AI_BASE_URL!, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${process.env.AI_API_KEY}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: process.env.AI_MODEL,
+                    messages: [
+                        { role: 'system', content: SYSTEM_PROMPT },
+                        { role: 'user', content: userPrompt },
+                    ],
+                    temperature: 0.2,
+                }),
+            })
+
+            if (!aiResp.ok) {
+                const err = await aiResp.text()
+                return NextResponse.json(
+                    { error: 'AI error', details: err },
+                    { status: 500 }
+                )
+            }
+
+            const data = await aiResp.json()
+            const content =
+                data.choices?.[0]?.message?.content?.trim()
+
+            if (!content) {
+                return NextResponse.json(
+                    { error: 'Empty AI response' },
+                    { status: 500 }
+                )
+            }
+
+            results.push({
+                path: resolveTestPath(file.path, body.language),
+                content,
+            })
+        }
+
+        return NextResponse.json({ files: results })
     } catch (err) {
-        console.error('[AI ROUTE ERROR]', err)
-
+        console.error('[AI TEST ROUTE ERROR]', err)
         return NextResponse.json(
-            { error: 'Invalid JSON body' },
+            { error: 'Invalid request' },
             { status: 400 }
         )
     }
