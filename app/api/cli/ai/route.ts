@@ -2,21 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 
 function resolveTestPath(sourcePath: string, language: string) {
     if (language === 'rust') {
-        const name = sourcePath.split('/').pop()?.replace('.rs', '') ?? 'test'
+        const name = sourcePath.split('/').pop()?.replace('.rs', '') ?? 'mod'
         return `tests/${name}_test.rs`
-    }
-
-    if (language === 'typescript' || language === 'javascript') {
-        return sourcePath.replace(
-            /(src|lib)\//,
-            'tests/'
-        ).replace(/\.(ts|js)$/, '.test.$1')
     }
 
     return `tests/generated.test`
 }
 
-function generateFakeTest(_code: string, language: string) {
+function generateTestStub(language: string) {
     if (language === 'rust') {
         return `
 #[cfg(test)]
@@ -38,7 +31,6 @@ describe('generated test', () => {
 `.trim()
 }
 
-
 async function handleGenerateTests({
     language,
     files,
@@ -46,33 +38,34 @@ async function handleGenerateTests({
     language: string
     files: Array<{ path: string; code: string }>
 }) {
-    /**
-     * Aqui entra sua IA real (OpenAI, Azure, etc)
-     * Vou mockar o formato correto da resposta
-     */
-
-    const generatedFiles = files.map(file => {
-        return {
-            path: resolveTestPath(file.path, language),
-            content: generateFakeTest(file.code, language),
-        }
-    })
+    const generated = files.map(file => ({
+        path: resolveTestPath(file.path, language),
+        content: generateTestStub(language),
+    }))
 
     return NextResponse.json({
-        files: generatedFiles,
+        files: generated,
     })
 }
 
 
 export async function POST(req: NextRequest) {
     try {
-        const body = await req.json()
+        const rawBody = await req.json()
 
-        const { intent, language, files } = body
+        // 🔥 NORMALIZA O BODY (root ou data)
+        const body = rawBody?.data ?? rawBody
+
+        const intent = body?.intent
+        const language = body?.language
+        const files = body?.files
 
         if (!intent) {
             return NextResponse.json(
-                { error: 'Missing intent' },
+                {
+                    error: 'Missing intent',
+                    debug: rawBody, // ← ajuda se quebrar de novo
+                },
                 { status: 400 }
             )
         }
@@ -84,23 +77,20 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        switch (intent) {
-            case 'generate-tests': {
-                return handleGenerateTests({ language, files })
-            }
-
-            default:
-                return NextResponse.json(
-                    { error: `Unknown intent: ${intent}` },
-                    { status: 400 }
-                )
+        if (intent !== 'generate-tests') {
+            return NextResponse.json(
+                { error: `Unknown intent: ${intent}` },
+                { status: 400 }
+            )
         }
+
+        return handleGenerateTests({ language, files })
     } catch (err) {
         console.error('[CLI AI ERROR]', err)
 
         return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
+            { error: 'Invalid JSON body' },
+            { status: 400 }
         )
     }
 }
