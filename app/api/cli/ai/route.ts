@@ -1,179 +1,123 @@
 import { NextRequest, NextResponse } from "next/server"
 
-type FileInput = {
+type AIFile = {
     path: string
-    typeCode: string
     code: string
 }
 
-type AIRequest = {
-    mode: "docs" | "tests"
-    project: {
-        language: string
-        framework: string
-    }
+type AIPayload = {
+    mode: "tests"
+    language: string
     entry: string
-    files: FileInput[]
-}
-
-/* =========================
-   SYSTEM PROMPTS
-========================= */
-
-const SYSTEM_TEST_PROMPT = `
-Você é um engenheiro de software sênior especializado em testes automatizados.
-
-REGRAS ABSOLUTAS:
-- Gere APENAS código de teste.
-- NÃO explique nada.
-- NÃO gere markdown.
-- NÃO gere texto fora do código.
-- Use o framework de testes nativo do projeto.
-- Mocke dependências externas.
-- Cubra casos de sucesso, erro e edge cases.
-- Gere testes realistas, executáveis e completos.
-- Se não existir estrutura de testes, crie.
-- Se precisar de setup/bootstrap, gere.
-
-Retorne SOMENTE o código final.
-`
-
-const SYSTEM_DOC_PROMPT = `
-Você é um engenheiro de software sênior especializado em documentação técnica.
-Gere documentação clara, objetiva e técnica.
-`
-
-/* =========================
-   PROMPT BUILDER
-========================= */
-
-function buildPrompt(payload: AIRequest): string {
-    const entryFile =
-        payload.files.find(f => f.path === payload.entry) ||
-        payload.files[0]
-
-    const relatedFiles = payload.files
-        .filter(f => f.path !== entryFile.path)
-        .map(
-            f =>
-                `### ${f.path}\n\`\`\`${f.typeCode}\n${f.code}\n\`\`\``
-        )
-        .join("\n\n")
-
-    return `
-PROJETO:
-- Linguagem: ${payload.project.language}
-- Framework: ${payload.project.framework}
-
-ARQUIVO PRINCIPAL:
-${entryFile.path}
-
-CÓDIGO PRINCIPAL:
-\`\`\`${entryFile.typeCode}
-${entryFile.code}
-\`\`\`
-
-ARQUIVOS RELACIONADOS:
-${relatedFiles}
-
-TAREFA:
-${payload.mode === "tests"
-        ? `
-Crie testes unitários completos para o fluxo acima.
-- Identifique dependências
-- Crie mocks
-- Cubra falhas de autenticação, validações e sucesso
-- Use boas práticas do ecossistema
-`
-        : `
-Gere documentação técnica detalhada.
-`}
-`
-}
-
-/* =========================
-   LLM CALL (DeepSeek)
-========================= */
-
-async function callDeepSeek(system: string, prompt: string) {
-    const body = JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-            { role: "system", content: system },
-            { role: "user", content: prompt },
-        ],
-        temperature: 0,
-        top_p: 1,
-        max_tokens: 8000,
-        stream: false,
-    })
-
-    const resp = await fetch(
-        `${process.env.API_AI_URL}/v1/chat/completions`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.API_AI_KEY}`,
-            },
-            body,
-        }
-    )
-
-    if (!resp.ok) {
-        throw new Error(
-            `DeepSeek error ${resp.status}: ${resp.statusText}`
-        )
-    }
-
-    const json = await resp.json()
-    return json?.choices?.[0]?.message?.content ?? ""
-}
-
-/* =========================
-   ROUTES
-========================= */
-
-export async function GET() {
-    return NextResponse.json(
-        { message: "Artisaan AI API is running." },
-        { status: 200 }
-    )
+    files: AIFile[]
+    config?: Record<string, unknown>
 }
 
 export async function POST(req: NextRequest) {
-    try {
-        const payload = (await req.json()) as AIRequest
+    const SYSTEM_PROMPT_TESTS = `
+Você é um engenheiro de software sênior especialista em testes automatizados.
 
-        if (!payload.mode || !payload.files?.length) {
+Sua missão:
+- Gerar testes automatizados completos e executáveis
+- Seguir os padrões idiomáticos da linguagem
+- Inferir o framework de testes correto
+- Criar estrutura de testes caso não exista
+- Mockar dependências externas
+- NÃO explicar nada
+- Retornar APENAS código de teste
+
+REGRAS:
+- Código pronto para rodar
+- Usar boas práticas
+- Testes claros, organizados e isolados
+- Se necessário, criar setup/teardown
+`
+
+    try {
+        const body = (await req.json()) as AIPayload
+
+        if (!body?.mode || !Array.isArray(body.files)) {
             return NextResponse.json(
                 { error: "Payload inválido." },
                 { status: 400 }
             )
         }
 
-        const prompt = buildPrompt(payload)
+        if (body.mode !== "tests") {
+            return NextResponse.json(
+                { error: "Modo não suportado." },
+                { status: 400 }
+            )
+        }
 
-        const systemPrompt =
-            payload.mode === "tests"
-                ? SYSTEM_TEST_PROMPT
-                : SYSTEM_DOC_PROMPT
+        const userPrompt = buildTestsPrompt(body)
 
-        const output = await callDeepSeek(systemPrompt, prompt)
+        const messages = [
+            {
+                role: "system",
+                content: SYSTEM_PROMPT_TESTS,
+            },
+            {
+                role: "user",
+                content: userPrompt,
+            },
+        ]
+
+        const resp = await fetch(`${process.env.API_AI_URL}/v1/chat/completions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.API_AI_KEY}`,
+            },
+            body: JSON.stringify({
+                model: "deepseek-chat",
+                messages,
+                temperature: 0,
+                max_tokens: 8000,
+            }),
+        })
+
+        if (!resp.ok) {
+            return NextResponse.json(
+                { error: "Erro ao chamar IA." },
+                { status: 500 }
+            )
+        }
+
+        const json = await resp.json()
+        const content = json?.choices?.[0]?.message?.content
 
         return NextResponse.json(
             {
-                mode: payload.mode,
-                entry: payload.entry,
-                output,
+                mode: "tests",
+                result: content,
             },
             { status: 200 }
         )
     } catch (e) {
-        console.error("Erro em /api/cli/ai:", e)
+        console.error("Erro /api/cli/ai:", e)
         return NextResponse.json(
-            { error: "Erro interno ao processar IA." },
+            { error: "Erro interno." },
             { status: 500 }
         )
     }
+}
+
+function buildTestsPrompt(payload: AIPayload): string {
+    const filesContext = payload.files
+        .map(
+            f => `Arquivo: ${f.path}\n\`\`\`${payload.language}\n${f.code}\n\`\`\``
+        )
+        .join("\n\n")
+
+    return `
+Linguagem: ${payload.language}
+Arquivo principal: ${payload.entry}
+
+Contexto do projeto:
+${filesContext}
+
+Tarefa:
+Gerar testes automatizados completos, prontos para execução.
+`
 }
