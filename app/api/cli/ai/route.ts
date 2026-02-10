@@ -1,123 +1,106 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from 'next/server'
 
-type AIFile = {
-    path: string
-    code: string
+function resolveTestPath(sourcePath: string, language: string) {
+    if (language === 'rust') {
+        const name = sourcePath.split('/').pop()?.replace('.rs', '') ?? 'test'
+        return `tests/${name}_test.rs`
+    }
+
+    if (language === 'typescript' || language === 'javascript') {
+        return sourcePath.replace(
+            /(src|lib)\//,
+            'tests/'
+        ).replace(/\.(ts|js)$/, '.test.$1')
+    }
+
+    return `tests/generated.test`
 }
 
-type AIPayload = {
-    mode: "tests"
+function generateFakeTest(_code: string, language: string) {
+    if (language === 'rust') {
+        return `
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+}
+`.trim()
+    }
+
+    return `
+describe('generated test', () => {
+    it('works', () => {
+        expect(true).toBe(true)
+    })
+})
+`.trim()
+}
+
+
+async function handleGenerateTests({
+    language,
+    files,
+}: {
     language: string
-    entry: string
-    files: AIFile[]
-    config?: Record<string, unknown>
+    files: Array<{ path: string; code: string }>
+}) {
+    /**
+     * Aqui entra sua IA real (OpenAI, Azure, etc)
+     * Vou mockar o formato correto da resposta
+     */
+
+    const generatedFiles = files.map(file => {
+        return {
+            path: resolveTestPath(file.path, language),
+            content: generateFakeTest(file.code, language),
+        }
+    })
+
+    return NextResponse.json({
+        files: generatedFiles,
+    })
 }
+
 
 export async function POST(req: NextRequest) {
-    const SYSTEM_PROMPT_TESTS = `
-Você é um engenheiro de software sênior especialista em testes automatizados.
-
-Sua missão:
-- Gerar testes automatizados completos e executáveis
-- Seguir os padrões idiomáticos da linguagem
-- Inferir o framework de testes correto
-- Criar estrutura de testes caso não exista
-- Mockar dependências externas
-- NÃO explicar nada
-- Retornar APENAS código de teste
-
-REGRAS:
-- Código pronto para rodar
-- Usar boas práticas
-- Testes claros, organizados e isolados
-- Se necessário, criar setup/teardown
-`
-
     try {
-        const body = (await req.json()) as AIPayload
+        const body = await req.json()
 
-        if (!body?.mode || !Array.isArray(body.files)) {
+        const { intent, language, files } = body
+
+        if (!intent) {
             return NextResponse.json(
-                { error: "Payload inválido." },
+                { error: 'Missing intent' },
                 { status: 400 }
             )
         }
 
-        if (body.mode !== "tests") {
+        if (!Array.isArray(files) || files.length === 0) {
             return NextResponse.json(
-                { error: "Modo não suportado." },
+                { error: 'files[] is required' },
                 { status: 400 }
             )
         }
 
-        const userPrompt = buildTestsPrompt(body)
+        switch (intent) {
+            case 'generate-tests': {
+                return handleGenerateTests({ language, files })
+            }
 
-        const messages = [
-            {
-                role: "system",
-                content: SYSTEM_PROMPT_TESTS,
-            },
-            {
-                role: "user",
-                content: userPrompt,
-            },
-        ]
-
-        const resp = await fetch(`${process.env.API_AI_URL}/v1/chat/completions`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.API_AI_KEY}`,
-            },
-            body: JSON.stringify({
-                model: "deepseek-chat",
-                messages,
-                temperature: 0,
-                max_tokens: 8000,
-            }),
-        })
-
-        if (!resp.ok) {
-            return NextResponse.json(
-                { error: "Erro ao chamar IA." },
-                { status: 500 }
-            )
+            default:
+                return NextResponse.json(
+                    { error: `Unknown intent: ${intent}` },
+                    { status: 400 }
+                )
         }
-
-        const json = await resp.json()
-        const content = json?.choices?.[0]?.message?.content
+    } catch (err) {
+        console.error('[CLI AI ERROR]', err)
 
         return NextResponse.json(
-            {
-                mode: "tests",
-                result: content,
-            },
-            { status: 200 }
-        )
-    } catch (e) {
-        console.error("Erro /api/cli/ai:", e)
-        return NextResponse.json(
-            { error: "Erro interno." },
+            { error: 'Internal server error' },
             { status: 500 }
         )
     }
-}
-
-function buildTestsPrompt(payload: AIPayload): string {
-    const filesContext = payload.files
-        .map(
-            f => `Arquivo: ${f.path}\n\`\`\`${payload.language}\n${f.code}\n\`\`\``
-        )
-        .join("\n\n")
-
-    return `
-Linguagem: ${payload.language}
-Arquivo principal: ${payload.entry}
-
-Contexto do projeto:
-${filesContext}
-
-Tarefa:
-Gerar testes automatizados completos, prontos para execução.
-`
 }
