@@ -3,7 +3,6 @@
 const nextConfig = {
     experimental: {
         mdxRs: true,
-        serverActions: false,
     },
 };
 
