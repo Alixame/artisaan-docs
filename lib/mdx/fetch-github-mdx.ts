@@ -1,25 +1,35 @@
 export async function fetchGithubMDX(path: string) {
+    const extensions = ["mdx", "md"];
+
     if (process.env.NODE_ENV === "development") {
         const fs = await import("fs/promises");
-        const localFilePath = `./docs/${path}.md`;
+        
+        for (const extension of extensions) {
+            const localFilePath = `./docs/${path}.${extension}`;
 
-        try {
-            const fileContent = await fs.readFile(localFilePath, "utf-8");
-
-            return fileContent;
-        } catch (error) {
-            return null;
+            try {
+                const fileContent = await fs.readFile(localFilePath, "utf-8");
+                return fileContent;
+            } catch {
+                continue;
+            }
         }
-    };
+        
+        return null;
+    }
 
-    const file = await fetch(
-        `https://raw.githubusercontent.com/Alixame/artisaan-docs/main/docs/${path}.md`,
-        {
-            next: { revalidate: 60 }, // caching inteligente
+    for (const extension of extensions) {
+        const file = await fetch(
+            `https://raw.githubusercontent.com/Alixame/artisaan-docs/main/docs/${path}.${extension}`,
+            {
+                next: { revalidate: 60 },
+            }
+        );
+
+        if (file.ok) {
+            return file.text();
         }
-    );
+    }
 
-    if (!file.ok) return null;
-
-    return file.text();
+    return null;
 }
