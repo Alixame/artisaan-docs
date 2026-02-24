@@ -8,25 +8,16 @@ import { parseMDXWithFrontMatter } from "@/lib/mdx/parse-frontmatter";
 import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+    fetchProjectSidebarManifest,
+    getProjectSlugFromHost,
+    resolveDefaultRoute,
+} from "@/lib/whitelabel";
 
 
 /* =========================================================
    Helpers
 ========================================================= */
-
-async function getProjectSlugFromHost(): Promise<string | null> {
-    const host = (await headers()).get("host");
-
-    if (!host) return null;
-
-    const parts = host.split(".");
-
-    if (parts.length < 1) return null;
-
-    if (parts[0] === "www" || parts[0] === "api" || parts[0] === "artisaan" || parts[0] === "localhost:3000") return null;
-
-    return parts[0];
-}
 
 function resolveDocPath(slug?: string[]) {
     const joined = slug?.join("/");
@@ -67,8 +58,10 @@ export async function generateMetadata({
 }) {
     const { slug } = await params;
 
-    const projectSlug = await getProjectSlugFromHost();
-    const path = resolveDocPath(slug) ?? (projectSlug ? "getting-started" : "introduction");
+    const host = (await headers()).get("host");
+    const projectSlug = getProjectSlugFromHost(host);
+    const manifest = projectSlug ? await fetchProjectSidebarManifest(projectSlug) : null;
+    const path = resolveDocPath(slug) ?? (projectSlug ? resolveDefaultRoute(manifest) : "introduction");
     
     const rawMDX = projectSlug
         ? await fetchS3MDX(projectSlug, path)
@@ -97,19 +90,14 @@ export async function generateMetadata({
 export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
     const { slug } = await params;
 
-    const projectSlug = await getProjectSlugFromHost();
-    const path = resolveDocPath(slug) ?? (projectSlug ? "getting-started" : "introduction");
+    const host = (await headers()).get("host");
+    const projectSlug = getProjectSlugFromHost(host);
+    const manifest = projectSlug ? await fetchProjectSidebarManifest(projectSlug) : null;
+    const path = resolveDocPath(slug) ?? (projectSlug ? resolveDefaultRoute(manifest) : "introduction");
 
     const mdxContent = projectSlug
         ? await fetchS3MDX(projectSlug, path)
         : await fetchGithubMDX(path);
-
-    const manifest = projectSlug ? await fetch(
-        `https://artisaan-docs-bucket.s3.us-east-1.amazonaws.com/projects/${projectSlug}/latest/manifest.json`,
-        { cache: "no-cache" }
-    ).then(res => res.ok ? res.json() : null).catch(() => null) : {
-        sections: [],
-    };
 
     console.log("PROJECT SLUG", projectSlug);
     console.log("MANIFEST", manifest);

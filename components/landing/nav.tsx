@@ -29,7 +29,7 @@ export function Nav() {
                     </a> */}
 
                     <a
-                        href="/docs/introduction"
+                        href="/docs"
                         className="text-xs font-semibold bg-white text-black px-4 py-2 rounded hover:bg-zinc-200 transition-colors shadow-[0_0_15px_-3px_rgba(255,255,255,0.3)]"
                     >
                         Documentation

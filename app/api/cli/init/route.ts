@@ -28,6 +28,7 @@ interface SidebarSection {
 
 interface SidebarManifest {
     generatedAt: string;
+    defaultRoute: string;
     sections: SidebarSection[];
 }
 
@@ -197,6 +198,7 @@ export async function POST(req: NextRequest) {
 
     const latestManifest: SidebarManifest = {
         generatedAt: now,
+        defaultRoute: STARTER_ROUTE,
         sections: [
             {
                 title: "Getting Started",
