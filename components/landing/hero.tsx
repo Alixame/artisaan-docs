@@ -60,7 +60,7 @@ export const Hero: React.FC = () => {
 
                 <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-10 leading-relaxed font-light">
                     Turn your codebase into comprehensive API references. 
-                    <br/> Run <code className="text-blue-300 font-mono bg-blue-500/10 px-1 py-0.5 rounded text-sm">artisaan generate</code> and let our engine scan, queue, and build your docs instantly.
+                    <br/> Run <code className="text-blue-300 font-mono bg-blue-500/10 px-1 py-0.5 rounded text-sm">artisaan docs generate</code> and let our engine scan, queue, and build your docs instantly.
                 </p>
 
                 <div className="w-full flex justify-center items-center">

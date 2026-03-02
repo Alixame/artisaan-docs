@@ -1,73 +1,131 @@
 ---
-title: "CLI Core - Comandos e Fluxo Principal"
-description: "Guia visual para \"Comandos Core\" em páginas MDX."
-summary: "Como representar este tópico usando os componentes de interface do Artisaan Docs."
+title: "CLI Core - Main Commands and Primary Workflow"
+description: "Practical guide to the main Artisaan CLI commands and the recommended documentation generation workflow."
+summary: "Learn how to use Artisaan CLI core commands to initialize a project, generate docs locally, and sync to a remote environment."
 keywords:
-  - mdx
-  - interface gráfica
-  - CLI
-  - Comandos Core
+  - artisaan cli
+  - core commands
+  - init
+  - generate
+  - docs sync
+  - documentation
 tags:
-  - mdx
-  - ui
-  - CLI
+  - cli
+  - core
+  - docs
 type: "public"
-complexity: "medium"
+complexity: "low"
 section: "CLI"
 sidebarOrder: 2
-sidebarLabel: "Comandos Core"
+sidebarLabel: "Core Commands"
 route: "cli/core-commands"
 lastUpdated: 2026-03-02
 ---
 
 <DocHeader
-  title="Comandos Core"
-  description="CLI Core - Comandos e Fluxo Principal"
+  title="Core Commands"
+  description="Main workflow to generate and publish documentation with Artisaan CLI"
 />
 
-## Objetivo desta página
-
-Use esta página para explicar o tópico **Comandos Core** com foco em leitura visual e exemplos curtos.
-A estrutura abaixo mantém consistência com a UI padrão dos docs.
-
-## Estrutura recomendada
+## Main workflow
 
 <Steps>
   <Step
-    title="Contextualize o recurso"
+    title="Initialize the project"
     variant="active"
-    code={`Quando e por que usar este módulo`}
+    code="artisaan init"
   >
-    Comece explicando qual problema o módulo resolve e em qual etapa do fluxo ele aparece.
+    Creates the `.artisaan/` folder and the base project configuration file.
   </Step>
 
   <Step
-    title="Mostre o formato esperado"
-    code={`Exemplo mínimo em bloco de código`}
+    title="Review configuration"
+    code=".artisaan/config.json"
   >
-    Use um trecho curto e copiável para acelerar a adoção por quem está lendo.
+    Confirm language, project type, and search paths before generation.
   </Step>
 
   <Step
-    title="Finalize com checklist"
-    code={`Erros comuns, validações e próximos passos`}
+    title="Generate documentation"
+    code="artisaan docs generate"
   >
-    Encerramentos com checklist reduzem retrabalho durante setup e manutenção.
+    Processes your code and generates/updates documentation files.
+  </Step>
+
+  <Step
+    title="Sync to remote"
+    code="artisaan docs sync"
+  >
+    Sends docs to the configured bucket/project, updating published pages.
   </Step>
 </Steps>
 
-## Snippet base
+## Main commands
+
+| Command | Purpose | When to use |
+| --- | --- | --- |
+| `artisaan init` | Initializes local configuration | First run in the repository |
+| `artisaan docs generate` | Generates docs from your code | After project changes |
+| `artisaan docs sync` | Publishes/syncs remote docs | After local validation |
+
+## Run by operating system
+
+<CodeTabs>
+  <CodeTabItem label="MacOS/Linux">
+artisaan init
+artisaan docs generate
+artisaan docs sync
+  </CodeTabItem>
+
+  <CodeTabItem label="Windows">
+artisaan init
+artisaan docs generate
+artisaan docs sync
+  </CodeTabItem>
+</CodeTabs>
+
+## Minimum recommended configuration
 
 <CodeBlock>
-{`# Rota da documentação
-/docs/cli/core-commands
-
-# Página
-CLI Core - Comandos e Fluxo Principal`}
+```json
+{
+  "slug": "my-project",
+  "language": "typescript",
+  "project": "nextjs",
+  "search_paths": [
+    "app",
+    "lib",
+    "src"
+  ],
+  "ignore_paths": [
+    "node_modules",
+    "dist",
+    ".next"
+  ]
+}
+```
 </CodeBlock>
 
-## Boas práticas de UI no MDX
+## Common issues
 
-- Títulos claros em `h2` e `h3` para melhorar o índice lateral.
-- Um exemplo por seção, evitando blocos extensos.
-- Labels da sidebar curtas, diretas e orientadas à tarefa.
+### `missing field "slug"`
+
+This error occurs in `artisaan docs sync` when `.artisaan/config.json` does not contain the `slug` field.
+
+<CodeBlock>
+Add "slug" to the .artisaan/config.json file.
+Example: "slug": "my-project"
+</CodeBlock>
+
+### Empty or incomplete documentation
+
+- Check whether your source folders are listed in `search_paths`.
+- Confirm that relevant content is not blocked in `ignore_paths`.
+- Run `artisaan docs generate` again after adjustments.
+
+## Quick checklist
+
+- `artisaan init` executed in the correct repository.
+- `.artisaan/config.json` includes `slug`, `language`, and `project`.
+- `search_paths` covers the real source code folders.
+- `artisaan docs generate` completes without errors before `artisaan docs sync`.

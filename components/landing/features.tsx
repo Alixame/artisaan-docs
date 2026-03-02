@@ -44,7 +44,7 @@ export default function Features() {
                                 <div className="text-zinc-500 pl-4">Created artisaan.config.json</div>
 
                                 <div className="pt-2">
-                                    <span className="text-blue-500">➜</span> artisaan generate
+                                    <span className="text-blue-500">➜</span> artisaan docs generate
                                 </div>
 
                                 <div className="pl-4 text-emerald-400">✔ Found 14 API endpoints</div>

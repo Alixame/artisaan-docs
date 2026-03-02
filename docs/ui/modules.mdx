@@ -1,10 +1,10 @@
 ---
-title: "Módulos de Interface do Usuário"
-description: "Referência prática dos componentes UI usados em arquivos .mdx dentro do projeto."
-summary: "Como usar DocHeader, CodeBlock, CodeTabs e Steps para construir documentação visual consistente."
+title: "User Interface Modules"
+description: "Practical reference for UI components used in .mdx files in this project."
+summary: "How to use DocHeader, CodeBlock, CodeTabs, and Steps to build consistent visual documentation."
 keywords:
   - ui modules
-  - componentes mdx
+  - mdx components
   - docheader
   - codeblock
   - codetabs
@@ -17,32 +17,32 @@ type: "public"
 complexity: "medium"
 section: "UI Components"
 sidebarOrder: 2
-sidebarLabel: "Módulos UI"
+sidebarLabel: "UI Modules"
 route: "ui/modules"
 lastUpdated: 2026-03-02
 ---
 
 <DocHeader
-  title="Módulos UI"
-  description="Componentes gráficos disponíveis para escrever documentação em .mdx"
+  title="UI Modules"
+  description="Visual components available for writing documentation in .mdx"
 />
 
-## Componentes disponíveis
+## Available components
 
-| Componente | Quando usar |
+| Component | When to use |
 | --- | --- |
-| `DocHeader` | Abrir a página com título e descrição padronizados |
-| `CodeBlock` | Exibir um comando/snippet único com botão de copiar |
-| `CodeTabs` + `CodeTabItem` | Mostrar variações de código (SO, linguagem, ambiente) |
-| `Steps` + `Step` | Descrever fluxos sequenciais com visual de timeline |
+| `DocHeader` | Open the page with standardized title and description |
+| `CodeBlock` | Display a single command/snippet with copy button |
+| `CodeTabs` + `CodeTabItem` | Show code variations (OS, language, environment) |
+| `Steps` + `Step` | Describe sequential flows with timeline visuals |
 
 ## DocHeader
 
 <CodeBlock>
 ```mdx
 <DocHeader
-  title="Configuração"
-  description="Como preparar ambiente para renderização MDX"
+  title="Configuration"
+  description="How to prepare the environment for MDX rendering"
 />
 ```
 </CodeBlock>
@@ -57,11 +57,11 @@ lastUpdated: 2026-03-02
 ```
 </CodeBlock>
 
-Use para blocos curtos e objetivos.
+Use for short, objective snippets.
 
 ## CodeTabs
 
-Exemplo renderizado:
+Rendered example:
 
 <CodeTabs>
   <CodeTabItem label="MacOS/Linux">
@@ -73,7 +73,7 @@ artisaan.exe docs sync
   </CodeTabItem>
 </CodeTabs>
 
-Exemplo de uso:
+Usage example:
 
 <CodeBlock>
 ```mdx
@@ -94,20 +94,20 @@ Exemplo de uso:
 <CodeBlock>
 ```mdx
 <Steps>
-  <Step title="Criar arquivo" variant="active" code="docs/ui/modules.mdx">
-    Crie o arquivo da rota desejada.
+  <Step title="Create file" variant="active" code="docs/ui/modules.mdx">
+    Create the file for the desired route.
   </Step>
 
-  <Step title="Adicionar conteúdo" code="DocHeader + seções + exemplos">
-    Estruture o conteúdo em blocos claros.
+  <Step title="Add content" code="DocHeader + sections + examples">
+    Structure content in clear blocks.
   </Step>
 </Steps>
 ```
 </CodeBlock>
 
-## Padrão editorial recomendado
+## Recommended editorial pattern
 
-- Sempre iniciar com `DocHeader`.
-- Usar `h2` para seções e `h3` para detalhes.
-- Limitar uma ideia por seção para facilitar navegação lateral.
-- Preferir exemplos curtos e copiados diretamente pelo usuário.
+- Always start with `DocHeader`.
+- Use `h2` for sections and `h3` for details.
+- Keep one idea per section to improve sidebar navigation.
+- Prefer short examples that users can copy directly.
