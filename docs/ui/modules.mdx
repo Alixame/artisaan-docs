@@ -1,0 +1,113 @@
+---
+title: "Módulos de Interface do Usuário"
+description: "Referência prática dos componentes UI usados em arquivos .mdx dentro do projeto."
+summary: "Como usar DocHeader, CodeBlock, CodeTabs e Steps para construir documentação visual consistente."
+keywords:
+  - ui modules
+  - componentes mdx
+  - docheader
+  - codeblock
+  - codetabs
+  - steps
+tags:
+  - ui
+  - mdx
+  - components
+type: "public"
+complexity: "medium"
+section: "UI Components"
+sidebarOrder: 2
+sidebarLabel: "Módulos UI"
+route: "ui/modules"
+lastUpdated: 2026-03-02
+---
+
+<DocHeader
+  title="Módulos UI"
+  description="Componentes gráficos disponíveis para escrever documentação em .mdx"
+/>
+
+## Componentes disponíveis
+
+| Componente | Quando usar |
+| --- | --- |
+| `DocHeader` | Abrir a página com título e descrição padronizados |
+| `CodeBlock` | Exibir um comando/snippet único com botão de copiar |
+| `CodeTabs` + `CodeTabItem` | Mostrar variações de código (SO, linguagem, ambiente) |
+| `Steps` + `Step` | Descrever fluxos sequenciais com visual de timeline |
+
+## DocHeader
+
+<CodeBlock>
+```mdx
+<DocHeader
+  title="Configuração"
+  description="Como preparar ambiente para renderização MDX"
+/>
+```
+</CodeBlock>
+
+## CodeBlock
+
+<CodeBlock>
+```mdx
+<CodeBlock>
+  artisaan docs build
+</CodeBlock>
+```
+</CodeBlock>
+
+Use para blocos curtos e objetivos.
+
+## CodeTabs
+
+Exemplo renderizado:
+
+<CodeTabs>
+  <CodeTabItem label="MacOS/Linux">
+artisaan docs sync
+  </CodeTabItem>
+
+  <CodeTabItem label="Windows">
+artisaan.exe docs sync
+  </CodeTabItem>
+</CodeTabs>
+
+Exemplo de uso:
+
+<CodeBlock>
+```mdx
+<CodeTabs>
+  <CodeTabItem label="MacOS/Linux">
+    artisaan docs sync
+  </CodeTabItem>
+
+  <CodeTabItem label="Windows">
+    artisaan.exe docs sync
+  </CodeTabItem>
+</CodeTabs>
+```
+</CodeBlock>
+
+## Steps
+
+<CodeBlock>
+```mdx
+<Steps>
+  <Step title="Criar arquivo" variant="active" code="docs/ui/modules.mdx">
+    Crie o arquivo da rota desejada.
+  </Step>
+
+  <Step title="Adicionar conteúdo" code="DocHeader + seções + exemplos">
+    Estruture o conteúdo em blocos claros.
+  </Step>
+</Steps>
+```
+</CodeBlock>
+
+## Padrão editorial recomendado
+
+- Sempre iniciar com `DocHeader`.
+- Usar `h2` para seções e `h3` para detalhes.
+- Limitar uma ideia por seção para facilitar navegação lateral.
+- Preferir exemplos curtos e copiados diretamente pelo usuário.

@@ -1,11 +1,16 @@
 {
-  "language": "typescript",
+  "slug": "artisaan-docs",
   "project": "nextjs",
-  "search_paths": [
-    "lib"
-  ],
-  "ignore_paths": [
-    "node_modules",
-    "dist"
-  ]
+  "language": "typescript",
+  "docs": {
+    "path": "docs",
+    "search_paths": [
+      "."
+    ],
+    "ignore_paths": [
+      "node_modules",
+      "dist",
+      ".next"
+    ]
+  }
 }

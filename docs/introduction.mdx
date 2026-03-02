@@ -1,0 +1,85 @@
+---
+title: "Artisaan Docs | Introdução à Interface MDX"
+description: "Guia rápido para estruturar documentação em .mdx com os componentes visuais nativos do projeto."
+summary: "Aprenda a criar páginas MDX usando os blocos visuais DocHeader, CodeBlock, CodeTabs e Steps."
+keywords:
+  - artisaan docs
+  - mdx
+  - interface gráfica
+  - componentes ui
+  - documentação
+tags:
+  - docs
+  - mdx
+  - ui
+  - onboarding
+type: "public"
+complexity: "low"
+lastUpdated: 2026-03-02
+---
+
+<DocHeader
+  title="Introdução"
+  description="Como escrever documentação em MDX usando as interfaces gráficas do projeto"
+/>
+
+## O que você vai usar
+
+A renderização de `.mdx` neste projeto já suporta componentes de interface prontos.
+Com isso, você consegue criar páginas visuais sem construir layout do zero.
+
+| Componente | Uso principal |
+| --- | --- |
+| `DocHeader` | Cabeçalho da página (título + descrição) |
+| `CodeBlock` | Blocos de comando com cópia |
+| `CodeTabs` + `CodeTabItem` | Código por plataforma/contexto em abas |
+| `Steps` + `Step` | Fluxos em etapas com destaque visual |
+
+## Estrutura mínima de um arquivo `.mdx`
+
+<CodeBlock>
+{`---
+title: "Minha Página"
+description: "Resumo curto"
+lastUpdated: 2026-03-02
+---
+
+<DocHeader
+  title="Minha Página"
+  description="Resumo curto"
+/>
+
+## Seção
+
+Texto da documentação.`}
+</CodeBlock>
+
+## Comece por aqui
+
+<Steps>
+  <Step
+    title="Abra a página de entrada"
+    variant="active"
+    code={`docs/getting-started.mdx`}
+  >
+    Use esta página como base para padronizar novos conteúdos.
+  </Step>
+
+  <Step
+    title="Monte os blocos visuais"
+    code={`DocHeader, CodeBlock, CodeTabs e Steps`}
+  >
+    Reaproveite os componentes já registrados no projeto para acelerar a escrita.
+  </Step>
+
+  <Step
+    title="Organize no manifest"
+    code={`docs/manifest.json`}
+  >
+    Ajuste rotas, ordem e labels de menu para a sidebar renderizar corretamente.
+  </Step>
+</Steps>
+
+## Próximos links
+
+- [Módulos UI](/docs/ui/modules)

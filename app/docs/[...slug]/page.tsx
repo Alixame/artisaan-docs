@@ -14,6 +14,8 @@ import {
     resolveDefaultRoute,
 } from "@/lib/whitelabel";
 
+import manifestJson from '@/docs/manifest.json'
+
 
 /* =========================================================
    Helpers
@@ -60,7 +62,7 @@ export async function generateMetadata({
 
     const host = (await headers()).get("host");
     const projectSlug = getProjectSlugFromHost(host);
-    const manifest = projectSlug ? await fetchProjectSidebarManifest(projectSlug) : null;
+    const manifest = projectSlug ? await fetchProjectSidebarManifest(projectSlug) : manifestJson;
     const path = resolveDocPath(slug) ?? (projectSlug ? resolveDefaultRoute(manifest) : "introduction");
     
     const rawMDX = projectSlug
@@ -92,7 +94,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
 
     const host = (await headers()).get("host");
     const projectSlug = getProjectSlugFromHost(host);
-    const manifest = projectSlug ? await fetchProjectSidebarManifest(projectSlug) : null;
+    const manifest = projectSlug ? await fetchProjectSidebarManifest(projectSlug) : manifestJson;
     const path = resolveDocPath(slug) ?? (projectSlug ? resolveDefaultRoute(manifest) : "introduction");
 
     const mdxContent = projectSlug

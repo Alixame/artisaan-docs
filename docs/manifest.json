@@ -1,0 +1,192 @@
+{
+  "defaultRoute": "introduction",
+  "generatedAt": "2026-02-27T19:38:58.531133+00:00",
+  "sections": [
+    {
+      "pages": [
+        {
+          "label": "Introduction",
+          "order": 1,
+          "route": "introduction",
+          "title": "Introduction"
+        }
+      ],
+      "slug": "introduction",
+      "title": "Getting Started"
+    },
+    {
+      "pages": [
+        {
+          "label": "Comandos Core",
+          "order": 2,
+          "route": "cli/core-commands",
+          "title": "CLI Core - Comandos e Fluxo Principal"
+        }
+      ],
+      "slug": "cli",
+      "title": "CLI"
+    },
+    {
+      "pages": [
+        {
+          "label": "Estrutura de Configuração",
+          "order": 2,
+          "route": "core/config-structure",
+          "title": "Estrutura de Configuração do Projeto"
+        },
+        {
+          "label": "BatchRequest",
+          "order": 3,
+          "route": "core/data-structures/batch-request",
+          "title": "BatchRequest - Estrutura de Requisição em Lote"
+        },
+        {
+          "label": "FileRequest Struct",
+          "order": 3,
+          "route": "core/data-structures/file-request",
+          "title": "Estrutura FileRequest"
+        },
+        {
+          "label": "Batch Processing",
+          "order": 3,
+          "route": "core/batch-processing",
+          "title": "Processamento de Lotes de Documentação via API"
+        },
+        {
+          "label": "Project Detection",
+          "order": 3,
+          "route": "core/project-detection",
+          "title": "Detect Project Type - Detecção Automática de Tipo de Projeto"
+        },
+        {
+          "label": "Módulos",
+          "order": 3,
+          "route": "core/modules",
+          "title": "Módulos de Comunicação e Cache"
+        },
+        {
+          "label": "Configuração",
+          "order": 3,
+          "route": "core/config",
+          "title": "Configuração do Projeto Artisaan"
+        },
+        {
+          "label": "Detect Project Name",
+          "order": 3,
+          "route": "core/utilities/detect-project-name",
+          "title": "Função detect_project_name - Detecção Automática de Nome de Projeto"
+        },
+        {
+          "label": "File Scanner",
+          "order": 3,
+          "route": "core/file-scanner",
+          "title": "Detecção e Varredura de Arquivos de Texto"
+        },
+        {
+          "label": "String Validation",
+          "order": 3,
+          "route": "core/string-validation",
+          "title": "Módulos de Validação de Strings"
+        },
+        {
+          "label": "FileResponse",
+          "order": 3,
+          "route": "core/file-response",
+          "title": "Estrutura FileResponse"
+        },
+        {
+          "label": "Módulos Base",
+          "order": 3,
+          "route": "core/base-modules",
+          "title": "Módulos de Linguagem e Projeto"
+        },
+        {
+          "label": "Inicialização Remota",
+          "order": 3,
+          "route": "core/remote-init",
+          "title": "Inicialização Remota de Projeto via API"
+        },
+        {
+          "label": "Cache Struct",
+          "order": 5,
+          "route": "core/cache-struct",
+          "title": "Estrutura de Cache em Rust"
+        },
+        {
+          "label": "Progress Bars",
+          "order": 15,
+          "route": "core/progress-bars",
+          "title": "Criando Barras de Progresso com Indicatif"
+        },
+        {
+          "label": "BatchResponse",
+          "order": 15,
+          "route": "core/structures/batch-response",
+          "title": "BatchResponse - Estrutura de Resposta em Lote"
+        },
+        {
+          "label": "generate_project_slug",
+          "order": 15,
+          "route": "core/utils/generate-project-slug",
+          "title": "Gerador de Slug de Projeto"
+        },
+        {
+          "label": "hash_code",
+          "order": 15,
+          "route": "core/utilities/hash-code",
+          "title": "Função hash_code - Geração de Hash SHA-256"
+        }
+      ],
+      "slug": "core",
+      "title": "Core"
+    },
+    {
+      "pages": [
+        {
+          "label": "Arquivo Principal",
+          "order": 1,
+          "route": "internals/main-entrypoint",
+          "title": "Arquivo Principal da Aplicação Rust"
+        },
+        {
+          "label": "Detecção de Linguagem",
+          "order": 3,
+          "route": "internals/language-detection",
+          "title": "Função detect_language - Detecção de Linguagem de Programação"
+        },
+        {
+          "label": "UI (Terminal Colors)",
+          "order": 5,
+          "route": "internals/ui-colors",
+          "title": "Módulo UI - Utilitários de Saída Colorida no Terminal"
+        },
+        {
+          "label": "Cache Manager",
+          "order": 5,
+          "route": "internals/cache-manager",
+          "title": "Sistema de Cache Local"
+        },
+        {
+          "label": "Módulo Commands",
+          "order": 10,
+          "route": "internals/module-commands",
+          "title": "Módulo de Comandos"
+        }
+      ],
+      "slug": "internals",
+      "title": "Internals"
+    },
+    {
+      "pages": [
+        {
+          "label": "Módulos UI",
+          "order": 2,
+          "route": "ui/modules",
+          "title": "Módulos de Interface do Usuário"
+        }
+      ],
+      "slug": "ui-components",
+      "title": "UI Components"
+    }
+  ]
+}
