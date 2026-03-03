@@ -12,140 +12,123 @@ type FileOutput = {
 }
 
 const SYSTEM_PROMPT = `
-Você é um gerador profissional de documentação técnica em MDX.
+Você é um redator técnico sênior especializado em documentação MDX para engenharia.
 
-Sua missão é gerar apenas MDX, já formatado para ser usado com meus componentes React personalizados.
+OBJETIVO
+Gerar um único documento técnico em MDX, pronto para publicação.
 
-📌 **IMPORTANTE – REGRAS ABSOLUTAS**
-- NÂO retorne HTML.
-- NÂO retorne JSON.
-- NÂO explique nada fora do conteúdo da documentação.
-- Retorne SOMENTE MDX puro, contendo front-matter + conteúdo.
-- Use apenas Markdown ou componentes React que eu especificar.
-- Títulos são convertidos em anchors automaticamente (não gere IDs manualmente).
+SAÍDA OBRIGATÓRIA
+- Responda APENAS com MDX puro.
+- Não retorne JSON.
+- Não retorne HTML genérico (<pre>, <code>, <p>, <div>, <span>, comentários HTML).
+- Não inclua explicações sobre o processo de geração.
+- Não envolva a resposta com \`\`\`mdx ... \`\`\`.
 
-📌 **COMPONENTES DISPONÍVEIS (use sempre que fizer sentido):**
+COMPONENTES DISPONÍVEIS
 - <DocHeader title="" description="" />
-- <CodeTabs><CodeTabItem label="npm">...</CodeTabItem></CodeTabs>
-- <CodeBlock>conteúdo</CodeBlock>
-- <Steps><Step title="">conteúdo</Step></Steps>
-- Listas (-, 1.)
-- Tabelas em Markdown
-- Code inline usando 'texto' convertido para 'texto' dentro do JSON
+- <CodeBlock>...</CodeBlock>
+- <CodeTabs><CodeTabItem label="">...</CodeTabItem></CodeTabs>
+- <Steps><Step title="">...</Step></Steps>
 
-📌 **NUNCA GERAR:**
-- <pre>, <code>, <p>, <div>, <span> → em HTML
-- Comentários HTML (<!-- -->)
-- Elementos HTML genéricos
+BLOCOS DE CÓDIGO (REGRA CRÍTICA)
+- Todo trecho de código deve estar dentro de <CodeBlock> ou <CodeTabs>/<CodeTabItem>.
+- Em <CodeBlock>, use SEMPRE o formato abaixo:
+  <CodeBlock>
+  \`\`\`linguagem
+  código
+  \`\`\`
+  </CodeBlock>
+- A linguagem no fence é obrigatória (ex.: ts, tsx, js, bash, json, yaml, mdx, sql).
+- Nunca use \`\`\` sem linguagem.
+- Nunca use código solto fora dos componentes (exceto inline com crases).
 
-📌 **BLOCOS DE CÓDIGO**
-Sempre gerar usando:
-
-\`\`\`mdx
-<CodeBlock>
-{nSEU CÓDIGO AQUIn}
-</CodeBlock>
-\`\`\`
-
-Ou para múltiplas opções:
-
-\`\`\`mdx
-<CodeTabs>
-  <CodeTabItem label="npm">
-    {ncomando aquin}
-  </CodeTabItem>
-  <CodeTabItem label="yarn">
-    {ncomando aquin}
-  </CodeTabItem>
-</CodeTabs>
-\`\`\`
-
-📌 **INÍCIO DO ARQUIVO – FRONT-MATTER ESTILO SEO**
-Sempre começar com:
-
+FRONT-MATTER OBRIGATÓRIO (NO TOPO)
 ---
 title: <título humano forte>
 description: <explicação curta e objetiva>
-summary: <1 frase de resumo técnico>
+summary: <1 frase técnica resumindo o arquivo>
 keywords:
-  - <keywords gerados automaticamente>
+  - <3 a 8 palavras-chave>
 tags:
   - <tecnologias detectadas>
 type: "internal" | "public"
 complexity: "low" | "medium" | "high"
-lastUpdated: <AAAA-MM-DD> (data atual do dia da geração) 
+lastUpdated: <AAAA-MM-DD>
+section: <ex: "Getting Started" | "Core" | "API" | "CLI" | "Internals">
+sidebarOrder: <inteiro iniciando em 1>
+sidebarLabel: <nome curto para menu lateral>
+route: <slug hierárquico amigável>
 ---
 
-📌 **DEPOIS DO FRONT-MATTER**
-Iniciar com:
+REGRAS DE NAVEGAÇÃO
+- Não use nome de arquivo literal na route.
+- Não exponha extensões (.ts, .rs, etc.).
+- Prefira termos humanos e técnicos.
+- Arquivo introdutório: usar seção/rota em "getting-started".
+- Arquivo de baixo nível: usar seção/rota em "internals".
 
-\`\`\`mdx
-<DocHeader 
-  title="<mesmo título>"
-  description="<mesma descrição>"
-/>
-\`\`\`
+CORPO DO DOCUMENTO
+1) Após o front-matter, iniciar com:
+<DocHeader title="<mesmo título>" description="<mesma descrição>" />
 
-📌 **SEÇÕES**
-Use sempre:
+2) Estruturar com os títulos abaixo (usar "Não se aplica" quando necessário):
+## Visão Geral
+## Responsabilidades
+## Parâmetros
+## Retorno
+## Fluxo Interno
+## Casos de Uso
+## Exemplos
 
-# Título Principal  
-## Seções  
-### Subseções  
+3) Em "Parâmetros", usar tabela Markdown quando houver entradas.
+4) Em "Exemplos", incluir pelo menos 1 exemplo real com <CodeBlock> contendo \`\`\`linguagem.
+5) Se houver passo a passo, usar <Steps>.
 
-Sem IDs. Meu compilador gera automaticamente.
-
-📌 **ESTILO DO CONTEÚDO**
-- Técnico, direto, claro, em PT-BR.
-- Explique o papel do arquivo e depois quebre em seções:
-  - “Visão Geral”
-  - “Responsabilidades”
-  - “Parâmetros” (com tabela Markdown)
-  - “Retorno”
-  - “Fluxo Interno”
-  - “Casos de Uso”
-  - “Exemplos”
-- Se houver fluxo passo a passo, usar:
-  <Steps>
-    <Step title="">
-      conteúdo
-    </Step>
-  </Steps>
-
-📌 **SE O ARQUIVO CONTÉM CÓDIGO**
-Criar:
-
-## Exemplo de Uso  
-## Trechos Importantes do Código  
-## Fluxo Interno  
-
-📌 **CONTEÚDO FINAL OBRIGATÓRIO:**
-- front-matter
-- <DocHeader />
-- documentação organizada
-- exemplos usando <CodeBlock> ou <CodeTabs>
-- nenhum HTML
-
-📌 **IDENTIFICAÇÃO DE NAVEGAÇÃO (OBRIGATÓRIO)**
-
-Você DEVE inferir e incluir no front-matter:
-
-- section: nome da seção principal da documentação (ex: "Getting Started", "Core", "API", "CLI", "Internals")
-- sidebarOrder: número inteiro começando em 1 (define ordem na sidebar)
-- sidebarLabel: nome curto e humano para menu lateral
-- route: slug amigável e hierárquico (ex: getting-started/introduction, core/config, cli/commands)
-
-⚠️ REGRAS:
-- NÃO use nome de arquivo como rota
-- NÃO exponha extensões (.rs, .ts, etc)
-- Prefira termos humanos e técnicos
-- Se o arquivo for introdutório, use "getting-started"
-- Se for baixo nível, use "internals"
-
-Esses campos DEVEM estar no front-matter.
+ESTILO
+- PT-BR, técnico, objetivo e claro.
+- Sem IDs manuais em títulos.
 `
 
+function resolveCodeLanguage(typeCode: string): string {
+    const normalized = typeCode?.toLowerCase().trim()
+
+    if (!normalized) {
+        return "text"
+    }
+
+    return /^[a-z0-9.+#_-]+$/.test(normalized) ? normalized : "text"
+}
+
+function normalizeMarkdownOutput(
+    markdown: string,
+    fallbackLanguage: string
+): string {
+    const trimmed = markdown.trim()
+    const withoutOuterFence = trimmed.replace(
+        /^```(?:mdx|markdown)?\s*([\s\S]*?)\s*```$/i,
+        "$1"
+    )
+    const safeFallbackLanguage = resolveCodeLanguage(fallbackLanguage)
+
+    return withoutOuterFence.replace(
+        /<CodeBlock>\s*```([^\n`]*)\n([\s\S]*?)```\s*<\/CodeBlock>/g,
+        (_match: string, language: string, code: string) => {
+            const safeLanguage = language.trim()
+                ? resolveCodeLanguage(language)
+                : safeFallbackLanguage
+            const normalizedCode = code.replace(/\s+$/, "")
+
+            return `<CodeBlock>\n\`\`\`${safeLanguage}\n${normalizedCode}\n\`\`\`\n</CodeBlock>`
+        }
+    )
+}
+
 async function generateMarkdownForFile(file: FileInput): Promise<FileOutput> {
+    const generationDate = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Sao_Paulo",
+    }).format(new Date())
+    const codeLanguage = resolveCodeLanguage(file.typeCode)
+
     const messages = [
         {
             role: "system",
@@ -153,7 +136,17 @@ async function generateMarkdownForFile(file: FileInput): Promise<FileOutput> {
         },
         {
             role: "user",
-            content: `Tipo do código: ${file.typeCode}\n\nCódigo-fonte:\n\`\`\`${file.typeCode}\n${file.code}\n\`\`\``,
+            content: `Data atual para front-matter (lastUpdated): ${generationDate}
+Caminho do arquivo: ${file.path}
+Tipo do código informado: ${file.typeCode}
+Linguagem sugerida para fences: ${codeLanguage}
+
+Requisito crítico: em toda seção de exemplo, use <CodeBlock> contendo obrigatoriamente \`\`\`linguagem.
+
+Código-fonte:
+\`\`\`${codeLanguage}
+${file.code}
+\`\`\``,
         },
     ]
 
@@ -188,9 +181,10 @@ async function generateMarkdownForFile(file: FileInput): Promise<FileOutput> {
     }
 
     const json = await resp.json()
-    const markdown =
-        json?.choices?.[0]?.message?.content ||
-        "# Erro ao gerar documentação (resposta vazia)"
+    const rawMarkdown = json?.choices?.[0]?.message?.content || ""
+    const markdown = rawMarkdown
+        ? normalizeMarkdownOutput(rawMarkdown, codeLanguage)
+        : "# Erro ao gerar documentação (resposta vazia)"
 
     return {
         path: file.path,
